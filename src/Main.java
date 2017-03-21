@@ -20,8 +20,8 @@ public class Main {
 
           scanner.close();
           
-          CostCalculator costCalc = new CostCalculator(basePrice, numLabor, materials);
-          System.out.println("Cost: " + costCalc.calculate());
+          //CostCalculator costCalc = new CostCalculator(basePrice, numLabor, materials);
+          //System.out.println("Cost: " + costCalc.calculate());
           
     }
     

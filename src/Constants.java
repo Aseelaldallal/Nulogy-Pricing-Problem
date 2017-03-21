@@ -8,4 +8,5 @@ public class Constants {
 	public static final double FOOD_MARKUP = 1.13;
 	public static final double ELEC_MARKUP = 1.02;
 	
+	
 }
