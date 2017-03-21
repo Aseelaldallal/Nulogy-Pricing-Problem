@@ -21,3 +21,5 @@ Things to think about:
 Better: Tell the user what is allowed
 
 Should I limit user input? Or keep arguments as 5?
+
+User input with $
