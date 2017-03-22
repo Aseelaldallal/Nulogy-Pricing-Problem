@@ -11,7 +11,7 @@ public class InputParser {
     
     private BigDecimal basePrice;
     private int numLabor;
-    private String materials;
+    private ArrayList<String> materials;
               
     // RegEx to match cost - allows for consistent commas
     private String costRegEx = "^(\\d+|\\d{1,3}(,\\d{3})*)(\\.\\d+)?$";
@@ -29,30 +29,42 @@ public class InputParser {
         try {
             this.basePrice = parseString(args[0]);
         } catch (Exception e) {
-            System.err.println("This is not a valid Number: " + args[0] + e.getMessage());
+            System.out.println("This is not a valid Number: " + args[0]);
+            System.err.println(e.getMessage());
             System.exit(-1); 
         }
         
-        
+        try {
+            this.numLabor = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            System.out.println("Expecting an integer here. " + args[1] + " is not an integer");
+        }
 
+        // Ignore args[2] -- this will be person or people
+        
+        this.materials = new ArrayList<String>(); 
+        for(int i=3; i<args.length; i++) {
+            this.materials.add(args[i].replaceAll(",\\z", "")); // remove comma at end           
+        }
+        
     }
     
-    private InputParser() {} // For Testing
+    private InputParser() {} // Testing
     
     /* --------------------------------------------------------- */
     /* ------------------------ METHODS ------------------------ */
     /* --------------------------------------------------------- */
     
-    public void getInitialBaseCost() {
-        
+    public BigDecimal getInitialBaseCost() {
+        return this.basePrice;
     }
     
-    public void getNumLabor() {
-        
+    public int getNumLabor() {
+        return this.numLabor; 
     }
     
-    public void getMaterials() {
-        
+    public ArrayList<String> getMaterials() {
+        return this.materials;
     }
     
     /* --------------------------------------------------------- */
@@ -139,7 +151,7 @@ public class InputParser {
 
         System.out.println("Starting Tests ...");
         
-        /*InputParser tester = new InputParser();
+        InputParser tester = new InputParser();
          
         // Test our regular Expression
         tester.testRegularExpression(); 
@@ -157,13 +169,8 @@ public class InputParser {
         tester.testParseStringMethod("$1,323.234", "Pass");  
         tester.testParseStringMethod("1,333,333", "Pass");  
         tester.testParseStringMethod("1,333,333,333,333,333", "Pass");  
-        tester.testParseStringMethod("$0.030", "Pass"); */ 
-        
-        
-     
-        
-        
-        
+        tester.testParseStringMethod("$0.030", "Pass"); 
+         
 
     }
         

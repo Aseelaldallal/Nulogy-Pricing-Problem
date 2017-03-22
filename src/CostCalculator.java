@@ -7,69 +7,55 @@ import java.math.*;
 public class CostCalculator {
     
     /* --------------------------------------------------------- */
-    /* --------------------- INSTANCE VARS --------------------- */
-    /* --------------------------------------------------------- */
-   
-    private BigDecimal basePrice;
-    private int numLabor;
-    private String materials;
-       
-    // RegEx to match cost - allows for consistent commas
-    private String costRegEx = "^(\\d+|\\d{1,3}(,\\d{3})*)(\\.\\d+)?$";
-    
-    /* --------------------------------------------------------- */
     /* ---------------------- CONSTRUCTOR ---------------------- */
     /* --------------------------------------------------------- */
   
     // Constructor
-    public CostCalculator(String basePrice, String numLabor, String materials) throws ParseException, NumberFormatException {
+    // Pre: basePrice, numLabor, materials are not null
+    // Post: 
+    public CostCalculator(BigDecimal basePrice, int numLabor, ArrayList<String> materials) {
        
-       this.numLabor = Integer.parseInt(numLabor);
-       this.materials = materials.trim();
-       String[] matArray = new String[0];
-       if(materials.length() != 0) {
-           matArray = materials.split(",");
-       }
-       double markupToAdd = calculateAdditionalMarkup(this.numLabor, matArray);
-       BigDecimal markup = new BigDecimal(markupToAdd);
-       BigDecimal result = markup.multiply(this.basePrice);
-       result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
-       System.out.println("RESULT: " + result);
+         this.calculate(basePrice, numLabor, materials);
        
     }
+    
+    private CostCalculator() {} // Testing
 
-    /* --------------------------------------------------------- */
-    /* ------------------------ METHODS ------------------------ */
-    /* --------------------------------------------------------- */
-   
-    public BigDecimal getBasePrice() {
-        return this.basePrice;
-    }
     
     /* --------------------------------------------------------- */
     /* -------------------- HELPER METHODS --------------------- */
     /* --------------------------------------------------------- */
   
-    // Pre:
-    // Post:
-    private double calculateAdditionalMarkup(int numLabor, String[] matArray) {
+    // Pre: basePrice, numLabor, materials are not null
+    // Post: 
+    private void calculate(BigDecimal basePrice, int numLabor, ArrayList<String> materials) {
+        
+        BigDecimal priceAfterFlat = applyFlatMarkup(basePrice);
+        BigDecimal additionalMarkupP = new BigDecimal(1 + calculateAdditionalMarkup(numLabor, materials)); // Avoiding double, loss of precision
+        BigDecimal finalPrice = priceAfterFlat.multiply(additionalMarkupP);
+        finalPrice = finalPrice.setScale(2, RoundingMode.HALF_UP);
+        System.out.println(finalPrice); 
+        
+    }
+  
+  
+    // Pre: numLabor, matArray are not null.
+    // Post: Returns the total percentage of markup needed based on numLabor and materials
+    //       in matArray
+    private double calculateAdditionalMarkup(int numLabor, ArrayList<String> matArray) {
         double markup = numLabor * Constants.LABOR_MARKUP;
-        System.out.println("MARKUP AFTER NUMLABOR: " + markup);
-        for(int i=0; i<matArray.length; i++) {
-            if(matArray[i].equals("food")) {
-                System.out.println("EQUALS FOOD");
+        for(int i=0; i<matArray.size(); i++) {
+            if(matArray.get(i).toLowerCase().equals("food")) {
                 markup += Constants.FOOD_MARKUP;
-                System.out.println("MARKUP");
             }
-            if(matArray[i].equals("drugs")) {
+            if(matArray.get(i).toLowerCase().equals("drugs")) {
                 markup += Constants.PHARM_MARKUP;
             }
-            if(matArray[i].equals("electronics")) {
+            if(matArray.get(i).toLowerCase().equals("electronics")) {
                 markup += Constants.ELEC_MARKUP;
             }
         }
-        System.out.println("MARKUP: " + markup);
-        return ((markup/100) + 1);
+        return markup;
     }
     
     // Pre:
@@ -86,8 +72,8 @@ public class CostCalculator {
     /* --------------------------------------------------------- */
  
  
-    // Pre:
-    // Post:
+    // Pre: aNum, expected not null
+    // Post: Returns pass if aNum equivelant to expected. Returns fail otherwise
     private void testApplyFlatMarkup(BigDecimal aNum, double expected) {
         BigDecimal exp = new BigDecimal(expected, MathContext.DECIMAL64);
         BigDecimal newNum = this.applyFlatMarkup(aNum);
@@ -99,9 +85,52 @@ public class CostCalculator {
         }
     }
     
-   
+    // Pre: numLabor, materials, expected not null
+    // Post: If result of calculateAdditionalMarkup is expected, test pass. Otherwise, fail
+    private void testCalculateAdditionalMarkup(int numLabor, ArrayList<String> materials, double expected) {
+        double result = calculateAdditionalMarkup(numLabor, materials);
+        if(result == expected) {
+            System.out.println("Test Pass"); 
+        } else {
+            System.out.println("*******calculateAdditionalMarkup Test Fail - Num Labor: " + numLabor + "; Materials: " + materials.toString() + "; Expected: " + expected + "; Result: " + result);
+        }
+    }
     
+    
+   
+    /* -------------------------- MAIN ------------------------- */
+   
+     public static void main(String[] args) throws ParseException {
+        
+        System.out.println("Starting tests....");
+        
+        CostCalculator tester = new CostCalculator();
+        
+        // Test applyFlatMarkup
+        tester.testApplyFlatMarkup(new BigDecimal(0), 0);
+        tester.testApplyFlatMarkup(new BigDecimal(1), 1.05);
+        tester.testApplyFlatMarkup(new BigDecimal(1299.99), 1364.9895);
 
+        // Test applyAdditionalMarkup
+        tester.testCalculateAdditionalMarkup(0, new ArrayList<String>(), 0);
+        String[] array = {"books", "magazines", "letters"};
+        tester.testCalculateAdditionalMarkup(0, new ArrayList<String>(Arrays.asList(array)), 0);
+        tester.testCalculateAdditionalMarkup(1, new ArrayList<String>(Arrays.asList(array)), 1.2);
+        String[] array2 = {"Electronics"};
+        tester.testCalculateAdditionalMarkup(1, new ArrayList<String>(Arrays.asList(array2)), 3.2);
+        String[] array3 = {"drugs"};
+        tester.testCalculateAdditionalMarkup(1, new ArrayList<String>(Arrays.asList(array3)), 8.7);
+        String[] array4 = {"food"};
+        tester.testCalculateAdditionalMarkup(1, new ArrayList<String>(Arrays.asList(array4)), 14.2);
+        String[] array5 = {"electronics", "drugs", "food"};
+        tester.testCalculateAdditionalMarkup(1, new ArrayList<String>(Arrays.asList(array5)), 23.7);
+        String[] array6 = {"electronics", "drugs", "food", "books"};
+        tester.testCalculateAdditionalMarkup(3, new ArrayList<String>(Arrays.asList(array6)), 26.1);
+        tester.testCalculateAdditionalMarkup(5, new ArrayList<String>(), 6);
+        String[] array7 = {"books", "drugs"};
+        tester.testCalculateAdditionalMarkup(6, new ArrayList<String>(Arrays.asList(array7)), 14.7);
+     }
+  
    
    
   

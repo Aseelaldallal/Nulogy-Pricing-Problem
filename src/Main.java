@@ -18,7 +18,7 @@ public class Main {
 	      
 	     
 	      InputParser parser = new InputParser(args);
-
+            
           
     }
     
