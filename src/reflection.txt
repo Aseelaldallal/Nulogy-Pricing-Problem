@@ -23,3 +23,9 @@ Better: Tell the user what is allowed
 Should I limit user input? Or keep arguments as 5?
 
 User input with $
+
+
+Vague specifications
+// Assumptions
+-- First Argument: Initial Base Price
+-- Second Argument: User will enter number of people as "x person/people". If no people are required to work on the job, he/she will enter 0 
