@@ -1,0 +1,36 @@
+
+
+I'll refer to the provider of the pricing problem as the client.
+
+Step 1: Understand the problem. 
+
+The client provided a clear problem definition. However, there are a few issues to think about:
+1. The client did not specify how he/she wants the program to behave when a user input error is encountered. Should the program terminate? Should
+   the program ask the user to re-enter input? 
+2. What is valid and invalid user input?
+   - Does every job require people? Or are there automated jobs? In other words, is "0 people" or "0 persons" valid input?
+3. What rules is the client abiding by when providing input? In the example, "drugs" is used to refer to pharmaceuticals.
+   Will all users use the term "drugs" to refer to pharmaceuticals? Will all users use the term "food" to refer to food items
+   (as opposed to "chicken", "tomatoes", etc)?
+4. Having the user type in "$1,299.99, 3 people, drugs" might not be the best way to tackle this problem because of the above issues. In the simple 
+   scenario where there are only four markup categories (pharmaceuticals, food, electronics, labor), it would be better to have a graphical user interface
+   that asks the user to input the initial base price, the number of individuals required for the job, and three checkboxes corresponding to each of the
+   remaining categories. This way, there is no ambiguity.
+   
+In the ideal scenario, I would sit down with the client and ask for clarifications. Given that this is not possible, it is necessary to make assumptions.
+
+Assumptions:
+- Some jobs do not require people. When a job does not require people, the user will enter 0 people/persons.
+- The user will input the term "drugs" instead of "pharmaceuticals"
+- The client would like the program to terminate upon encountering and error
+
+Step 2: Design
+
+The program must be easily extendible and editable. As of right now, there are only four markup categories. We could have more markup categories in the future
+and the markup percentage for each might change. 
+//***** USE DICTIONARY WITH KEY VALUE PAIR ********//
+
+It is best to seperate reading user input from calculating cost. Therefore I created two classes: InputParser and CostCalculator. Input parser is responsible
+for reading user input. If the user input is invalid (for example $1.44.44 for initial base price, or user does not input number of laborers etc.), the parser
+will return an error message and the program will terminate. The CostCalculator is responsible for actually calculating the price. 
+
