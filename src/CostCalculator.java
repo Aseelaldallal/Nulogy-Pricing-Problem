@@ -1,6 +1,5 @@
 import java.text.*;
 import java.util.*;
-
 import java.math.*;
 
 
@@ -11,31 +10,21 @@ public class CostCalculator {
     /* --------------------------------------------------------- */
   
     // Constructor
-    // Pre: basePrice, numLabor, materials are not null
-    // Post: 
-    public CostCalculator(BigDecimal basePrice, int numLabor, ArrayList<String> materials) {
-       
-         this.calculate(basePrice, numLabor, materials);
-       
-    }
-    
-    private CostCalculator() {} // Testing
+    public CostCalculator() { }
 
-    
     /* --------------------------------------------------------- */
     /* -------------------- HELPER METHODS --------------------- */
     /* --------------------------------------------------------- */
   
     // Pre: basePrice, numLabor, materials are not null
-    // Post: 
-    private void calculate(BigDecimal basePrice, int numLabor, ArrayList<String> materials) {
-        
+    // Post: calculates final price based on basePrice, numLabor and materials
+    public String calculate(BigDecimal basePrice, int numLabor, ArrayList<String> materials) {       
         BigDecimal priceAfterFlat = applyFlatMarkup(basePrice);
-        BigDecimal additionalMarkupP = new BigDecimal(1 + calculateAdditionalMarkup(numLabor, materials)); // Avoiding double, loss of precision
+        BigDecimal additionalMarkupP = new BigDecimal(1 + (calculateAdditionalMarkup(numLabor, materials)/100)); // Avoiding double, loss of precision
         BigDecimal finalPrice = priceAfterFlat.multiply(additionalMarkupP);
         finalPrice = finalPrice.setScale(2, RoundingMode.HALF_UP);
-        System.out.println(finalPrice); 
-        
+        NumberFormat formatter = NumberFormat.getCurrencyInstance();
+        return formatter.format(finalPrice.doubleValue());
     }
   
   
@@ -58,15 +47,12 @@ public class CostCalculator {
         return markup;
     }
     
-    // Pre:
-    // Post:
+    // Pre: b is not null
+    // Post: Applys flat markup to b
     private BigDecimal applyFlatMarkup(BigDecimal b) {
         return b.multiply(Constants.FLAT_MARKUP, MathContext.DECIMAL64);
     }
   
-    
-  
-   
     /* --------------------------------------------------------- */
     /* ------------------------ TESTING ------------------------ */
     /* --------------------------------------------------------- */

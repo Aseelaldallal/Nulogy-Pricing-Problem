@@ -162,8 +162,8 @@ public class InputParser {
         tester.testParseStringMethod("aaa", "Fail");
         tester.testParseStringMethod("?agfasg?", "Fail");           
         tester.testParseStringMethod("$100,00.00.00", "Fail");
-        tester.testParseStringMethod("0", "Fail"); // Should we let this pass or fail ? Decide later
-        tester.testParseStringMethod("033", "Fail"); // Should we let this pass or fail ? Decide later
+        tester.testParseStringMethod("0", "Pass"); 
+        tester.testParseStringMethod("033", "Pass"); 
         tester.testParseStringMethod("$100", "Pass");        
         tester.testParseStringMethod("$1", "Pass");     
         tester.testParseStringMethod("$1,323.234", "Pass");  
