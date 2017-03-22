@@ -21,7 +21,12 @@ public class Main {
 
           scanner.close();
           
-          
+          try {
+            CostCalculator myCalc = new CostCalculator("$12,456.95", "4", "books");
+          } catch (Exception e) {
+              System.out.println(e.getMessage());
+          } 
+
 
           
     }

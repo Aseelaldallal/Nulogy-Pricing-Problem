@@ -26,8 +26,17 @@ public class CostCalculator {
        
        this.basePrice = applyFlatMarkup(parseString(basePrice));
        this.numLabor = Integer.parseInt(numLabor);
-       this.materials = materials;
-
+       this.materials = materials.trim();
+       String[] matArray = new String[0];
+       if(materials.length() != 0) {
+           matArray = materials.split(",");
+       }
+       double markupToAdd = calculateAdditionalMarkup(this.numLabor, matArray);
+       BigDecimal markup = new BigDecimal(markupToAdd);
+       BigDecimal result = markup.multiply(this.basePrice);
+       result = result.setScale(2, BigDecimal.ROUND_HALF_UP);
+       System.out.println("RESULT: " + result);
+       
     }
 
     /* --------------------------------------------------------- */
@@ -44,6 +53,25 @@ public class CostCalculator {
   
     // Pre:
     // Post:
+    private double calculateAdditionalMarkup(int numLabor, String[] matArray) {
+        double markup = numLabor * Constants.LABOR_MARKUP;
+        System.out.println("MARKUP AFTER NUMLABOR: " + markup);
+        for(int i=0; i<matArray.length; i++) {
+            if(matArray[i].equals("food")) {
+                System.out.println("EQUALS FOOD");
+                markup += Constants.FOOD_MARKUP;
+                System.out.println("MARKUP");
+            }
+            if(matArray[i].equals("drugs")) {
+                markup += Constants.PHARM_MARKUP;
+            }
+            if(matArray[i].equals("electronics")) {
+                markup += Constants.ELEC_MARKUP;
+            }
+        }
+        System.out.println("MARKUP: " + markup);
+        return ((markup/100) + 1);
+    }
     
     // Pre:
     // Post:
