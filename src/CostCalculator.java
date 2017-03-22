@@ -1,8 +1,7 @@
 import java.text.*;
 import java.util.*;
-import java.math.*;
 import java.util.regex.*;
-
+import java.math.*;
 
 
 public class CostCalculator {
@@ -23,8 +22,11 @@ public class CostCalculator {
     /* --------------------------------------------------------- */
   
     // Constructor
-    public CostCalculator(String basePrice, String numLabor, String materials) {
+    public CostCalculator(String basePrice, String numLabor, String materials) throws ParseException, NumberFormatException {
        
+       this.basePrice = applyFlatMarkup(parseString(basePrice));
+       this.numLabor = Integer.parseInt(numLabor);
+       this.materials = materials;
 
     }
 
@@ -32,12 +34,26 @@ public class CostCalculator {
     /* ------------------------ METHODS ------------------------ */
     /* --------------------------------------------------------- */
    
-
+    public BigDecimal getBasePrice() {
+        return this.basePrice;
+    }
+    
     /* --------------------------------------------------------- */
     /* -------------------- HELPER METHODS --------------------- */
     /* --------------------------------------------------------- */
   
-    private Number parseString(String userInput) throws ParseException {
+    // Pre:
+    // Post:
+    
+    // Pre:
+    // Post:
+    private BigDecimal applyFlatMarkup(BigDecimal b) {
+        return b.multiply(Constants.FLAT_MARKUP, MathContext.DECIMAL64);
+    }
+  
+    // Pre: 
+    // Post:
+    private BigDecimal parseString(String userInput) throws ParseException {
         
         String theAmount = userInput.replaceAll("^\\$","");
 
@@ -48,8 +64,8 @@ public class CostCalculator {
             throw new IllegalArgumentException("Bad Input: " + userInput);
         } else {
             NumberFormat format = NumberFormat.getNumberInstance(Locale.CANADA);
-            Number along = format.parse(theAmount.replaceAll("^\\$",""));
-            return along;
+            BigDecimal b = new BigDecimal(format.parse(theAmount.replaceAll("^\\$","")).toString());
+            return b;
         }
 
     }
@@ -60,6 +76,19 @@ public class CostCalculator {
     /* --------------------------------------------------------- */
  
  
+    // Pre:
+    // Post:
+    private void testApplyFlatMarkup(BigDecimal aNum, double expected) {
+        BigDecimal exp = new BigDecimal(expected, MathContext.DECIMAL64);
+        BigDecimal newNum = this.applyFlatMarkup(aNum);
+        newNum = newNum.setScale(4, BigDecimal.ROUND_HALF_UP);
+        if(newNum.compareTo(exp) == 0) {
+            System.out.println("Test Pass");
+        } else {
+            System.out.println("*******applyFlatMarkup Test Fail - Input: " + aNum + "; Expected: " + expected + "; Result: " + newNum);
+        }
+    }
+    
     // Pre: None
     // Post: Tests that our regular expression correctly identifies valid costs
     private void testRegularExpression() {        
@@ -90,7 +119,7 @@ public class CostCalculator {
     // Post: Calls the method parsestring with amount as a parameter. Compares the returned
     //       result to expectedResult. If they match, the test is passed. Otherwise, fail. 
     private void testParseStringMethod(String amount, String expectedResult) {
-        Number b = null;
+        BigDecimal b = null;
         Exception ex = null;
         try {
             b = parseString(amount);
@@ -99,13 +128,13 @@ public class CostCalculator {
         }
         if(expectedResult.equals("Pass")) {
             if(ex != null) {
-                System.out.println("*******Test Fail. Input: " + amount + "; Exception: " + ex.getMessage());
+                System.out.println("*******parseStringMethod Test Fail. Input: " + amount + "; Exception: " + ex.getMessage());
             } else {
                 System.out.println("Test Pass. Input: " + amount + "; Result: " + b);
             }
         } else { // b should be null
             if( b != null ) {
-                System.out.println("*******Test Fail. Input: " + amount + "; Result: " + b);
+                System.out.println("*******parseStringMethod Test Fail. Input: " + amount + "; Result: " + b);
             } else {
                 System.out.println("Test Pass. Input: " + amount + "; Exception: " + ex.getMessage());
             }
@@ -116,11 +145,11 @@ public class CostCalculator {
 
     /* -------------------------- MAIN ------------------------- */
    
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
 
         System.out.println("Starting Tests ...");
         
-        CostCalculator tester = new CostCalculator("hello", "hello", "hello");
+        CostCalculator tester = new CostCalculator("1299.99", "hello", "hello");
         
         // On all pass: RegEx can be used to catch bad initial base price input       
         tester.testRegularExpression(); 
@@ -139,6 +168,11 @@ public class CostCalculator {
         tester.testParseStringMethod("1,333,333", "Pass");  
         tester.testParseStringMethod("1,333,333,333,333,333", "Pass");  
         tester.testParseStringMethod("$0.030", "Pass");  
+        
+        // Testing Apply Markup
+        tester.testApplyFlatMarkup( new BigDecimal(1299.99), 1364.9895);
+        tester.testApplyFlatMarkup( new BigDecimal(0), 0);
+        tester.testApplyFlatMarkup( new BigDecimal(1.0004), 1.0504);
     }
         
   

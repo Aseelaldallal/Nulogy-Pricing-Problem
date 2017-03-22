@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.text.*;
 
 public class Main {
 
@@ -20,8 +21,8 @@ public class Main {
 
           scanner.close();
           
-          //CostCalculator costCalc = new CostCalculator(basePrice, numLabor, materials);
-          //System.out.println("Cost: " + costCalc.calculate());
+          
+
           
     }
     

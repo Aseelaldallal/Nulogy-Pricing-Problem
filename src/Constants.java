@@ -1,7 +1,8 @@
+import java.math.*;
 
 public class Constants {
     
-	public static final double FLAT_MARKUP = 1.05;
+	public static final BigDecimal FLAT_MARKUP = new BigDecimal(1.05);
 	
 	public static final double LABOR_MARKUP = 1.012;
 	public static final double PHARM_MARKUP = 1.075;
