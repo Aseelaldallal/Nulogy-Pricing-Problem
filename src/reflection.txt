@@ -29,3 +29,5 @@ Vague specifications
 // Assumptions
 -- First Argument: Initial Base Price
 -- Second Argument: User will enter number of people as "x person/people". If no people are required to work on the job, he/she will enter 0 
+
+perhaps catch - num labor error
