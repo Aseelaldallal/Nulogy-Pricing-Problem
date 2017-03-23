@@ -26,9 +26,22 @@ Assumptions:
 
 Step 2: Design
 
-The program must be easily extendible and editable. As of right now, there are only four markup categories. We could have more markup categories in the future
-and the markup percentage for each might change. 
-//***** USE DICTIONARY WITH KEY VALUE PAIR ********//
+The program must be easily extendible and editable. As of right now, there are only four markup categories. Thus, I decided to create a constants file
+listing all the categories and the percentage markup on each. Moreover, I used this code
+        for(int i=0; i<matArray.size(); i++) {
+            if(matArray.get(i).toLowerCase().equals("food")) {
+                markup += Constants.FOOD_MARKUP;
+            }
+            if(matArray.get(i).toLowerCase().equals("drugs")) {
+                markup += Constants.PHARM_MARKUP;
+            }
+            if(matArray.get(i).toLowerCase().equals("electronics")) {
+                markup += Constants.ELEC_MARKUP;
+            }
+        }
+matArray is an array of materials. Note that if the number of materials with a markup increases, this code could would be inefficient. The Constants file
+would be better replaced by a dictionary data structure mapping each material name to its associated markup percentage. 
+
 
 It is best to seperate reading user input from calculating cost. Therefore I created two classes: InputParser and CostCalculator. Input parser is responsible
 for reading user input. If the user input is invalid (for example $1.44.44 for initial base price, or user does not input number of laborers etc.), the parser
@@ -37,34 +50,3 @@ will return an error message and the program will terminate. The CostCalculator 
 
 
 
-
-// Deal with negative numbers
-
-
-5 Markup Categories:
-1. Flat Markup
-2. Labor Markup
-3. Pharmaceutical Markup
-4. Food Markup
-5. Electronic markup
-
-In the future:
-More categories might be added. We need to make sure that our program is easily extendible. 
-Markup percentages might change. Make sure that our program is easily editable.
-
-Things to think about:
-1 - Does user know how many markup categories exist? 
-
-Better: Tell the user what is allowed
-
-Should I limit user input? Or keep arguments as 5?
-
-User input with $
-
-
-Vague specifications
-// Assumptions
--- First Argument: Initial Base Price
--- Second Argument: User will enter number of people as "x person/people". If no people are required to work on the job, he/she will enter 0 
-
-perhaps catch - num labor error
